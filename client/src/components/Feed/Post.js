@@ -411,6 +411,7 @@ const Post = ({
       )}
       {isAuthenticated ? (
         <>
+          {console.log("hi")}
           <Comments
             comments={comments}
             handleOnChange={handleOnChange}
