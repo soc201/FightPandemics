@@ -16,6 +16,10 @@ const commentSchema = new Schema(
       ref: "User",
       type: [ObjectId],
     },
+    privateMessage: {
+      type: String,
+      ref: "Post",
+    },
     parentId: {
       ref: "Comment",
       type: ObjectId,

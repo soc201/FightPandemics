@@ -109,14 +109,37 @@ const updateCommentSchema = {
     .prop("postId", S.string().required()),
 };
 
+const createPrivateMessageSchema = {
+  body: strictSchema()
+    .prop("content", S.string().required())
+    .prop("parentId", S.string()),
+  params: strictSchema().prop("postId", S.string().required()),
+};
+
+const getPrivateMessagesSchema = {
+  params: strictSchema().prop("postId", S.string().required()),
+  queryString: strictSchema()
+    .prop("limit", S.integer())
+    .prop("skip", S.integer()),
+};
+
+const deletePrivateMessageSchema = {
+  params: strictSchema()
+    .prop("privateMessageId", S.string().required())
+    .prop("postId", S.string().required()),
+};
+
 module.exports = {
   createCommentSchema,
   createPostSchema,
+  createPrivateMessageSchema,
   deleteCommentSchema,
   deletePostSchema,
+  deletePrivateMessageSchema,
   getCommentsSchema,
   getPostByIdSchema,
   getPostsSchema,
+  getPrivateMessagesSchema,
   likeUnlikeCommentSchema,
   likeUnlikePostSchema,
   updateCommentSchema,
