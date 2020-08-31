@@ -4,12 +4,12 @@ const { Schema, model, ObjectId } = require("mongoose");
 
 const privateMessageSchema = new Schema(
   {
-    author: {
+    authorId: {
       ref: "User",
       required: true,
       type: ObjectId,
     },
-    content: {
+    message: {
       required: true,
       trim: true,
       type: String,
@@ -17,10 +17,6 @@ const privateMessageSchema = new Schema(
     recipientId: {
       ref: "User",
       required: true,
-      type: ObjectId,
-    },
-    parentId: {
-      ref: "PrivateMessage",
       type: ObjectId,
     },
     postId: {

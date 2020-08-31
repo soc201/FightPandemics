@@ -16,6 +16,7 @@ const {
   likeUnlikePostSchema,
   updateCommentSchema,
   updatePostSchema,
+  createPrivateMessageSchema,
 } = require("./schema/posts");
 
 /*
@@ -502,59 +503,60 @@ async function routes(app) {
 
   // -- Private Messages
 
-  const PRIVATE_MESSAGE_PAGE_SIZE = 5;
-
-  app.get(
-    "/:postId/privateMessages",
-    { preValidation: [app.authenticate], schema: getPrivateMessagesSchema },
+  app.put(
+    "/:postId/comments/:commentId/privateMessage/:userId",
+    { preValidation: [app.authenticate], schema: createPrivateMessageSchema },
     async (req) => {
-      const { limit, skip } = req.query;
-      const { postId } = req.params;
-      const [privateMessagesErr, privateMessages] = await app.to(
-        PrivateMessage.aggregate([
-          {
-            $match: {
-              parentId: null,
-              postId: mongoose.Types.ObjectId(postId),
-            },
-          },
-          {
-            $skip: parseInt(skip, 10) || 0,
-          },
-          {
-            $limit: parseInt(limit, 10) || PRIVATE_MESSAGE_PAGE_SIZE,
-          },
-          {
-            $lookup: {
-              as: "children",
-              foreignField: "parentId",
-              from: "privateMessages",
-              localField: "_id",
-            },
-          },
-          {
-            $addFields: {
-              childCount: {
-                $size: { $ifNull: ["$children", []] },
-              },
-            },
-          },
-        ]).then((privateMessages) => {
-          privateMessages.forEach((message) => {
-            message.elapsedTimeText = setElapsedTimeText(
-              message.createdAt,
-              message.updatedAt,
-            );
-          });
-          return messages;
-        }),
+      if (!req.userId.equals(req.params.userId)) {
+        throw app.httpErrors.forbidden();
+      }
+      const { userId } = req;
+      const { commentId } = req.params;
+
+      const [updateErr, updatedComment] = await app.to(
+        Comment.findOneAndUpdate(
+          { _id: commentId },
+          { $addToSet: { likes: userId } },
+          { new: true },
+        ),
       );
-      if (privateMessagesErr) {
-        req.log.error(privateMessagesErr, "Failed retrieving private messages");
+      if (updateErr) {
+        req.log.error(updateErr, "Failed to send private message!");
         throw app.httpErrors.internalServerError();
       }
 
-      return privateMessages;
+      return {
+        privateMessage: updatedComment.privateMessage,
+      };
+    },
+  );
+
+  app.delete(
+    "/:postId/comments/:commentId/likes/:userId",
+    { preValidation: [app.authenticate], schema: likeUnlikeCommentSchema },
+    async (req) => {
+      if (!req.userId.equals(req.params.userId)) {
+        throw app.httpErrors.forbidden();
+      }
+      const { userId } = req;
+      const { commentId } = req.params;
+
+      const [updateErr, updatedComment] = await app.to(
+        Comment.findOneAndUpdate(
+          { _id: commentId },
+          { $pull: { likes: userId } },
+          { new: true },
+        ),
+      );
+      if (updateErr) {
+        req.log.error(updateErr, "Failed unliking comment");
+        throw app.httpErrors.internalServerError();
+      }
+
+      return {
+        likes: updatedComment.likes,
+        likesCount: updatedComment.likes.length,
+      };
     },
   );
 
