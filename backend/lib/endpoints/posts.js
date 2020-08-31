@@ -8,6 +8,7 @@ const {
   getCommentsSchema,
   getPostsSchema,
   getPostByIdSchema,
+  getPrivateMessagesSchema,
   createPostSchema,
   deleteCommentSchema,
   deletePostSchema,
@@ -24,6 +25,7 @@ async function routes(app) {
   const { mongo } = app;
   const Comment = mongo.model("Comment");
   const Post = mongo.model("Post");
+  const PrivateMessage = mongo.model("PrivateMessage");
   const User = mongo.model("User");
 
   // /posts
@@ -495,6 +497,64 @@ async function routes(app) {
         likes: updatedPost.likes,
         likesCount: updatedPost.likes.length,
       };
+    },
+  );
+
+  // -- Private Messages
+
+  const PRIVATE_MESSAGE_PAGE_SIZE = 5;
+
+  app.get(
+    "/:postId/privateMessages",
+    { preValidation: [app.authenticate], schema: getPrivateMessagesSchema },
+    async (req) => {
+      const { limit, skip } = req.query;
+      const { postId } = req.params;
+      const [privateMessagesErr, privateMessages] = await app.to(
+        PrivateMessage.aggregate([
+          {
+            $match: {
+              parentId: null,
+              postId: mongoose.Types.ObjectId(postId),
+            },
+          },
+          {
+            $skip: parseInt(skip, 10) || 0,
+          },
+          {
+            $limit: parseInt(limit, 10) || PRIVATE_MESSAGE_PAGE_SIZE,
+          },
+          {
+            $lookup: {
+              as: "children",
+              foreignField: "parentId",
+              from: "privateMessages",
+              localField: "_id",
+            },
+          },
+          {
+            $addFields: {
+              childCount: {
+                $size: { $ifNull: ["$children", []] },
+              },
+            },
+          },
+        ]).then((privateMessages) => {
+          privateMessages.forEach((message) => {
+            message.elapsedTimeText = setElapsedTimeText(
+              message.createdAt,
+              message.updatedAt,
+            );
+          });
+          return messages;
+        }),
+      );
+      if (privateMessagesErr) {
+        req.log.error(privateMessagesErr, "Failed retrieving private messages");
+        throw app.httpErrors.internalServerError();
+      }
+
+      return privateMessages;
     },
   );
 

@@ -110,10 +110,10 @@ const updateCommentSchema = {
 };
 
 const createPrivateMessageSchema = {
-  body: strictSchema()
-    .prop("content", S.string().required())
-    .prop("parentId", S.string()),
-  params: strictSchema().prop("postId", S.string().required()),
+  body: strictSchema().prop("content", S.string().required()),
+  params: strictSchema()
+    .prop("postId", S.string().required())
+    .prop("userId", S.string().required()),
 };
 
 const getPrivateMessagesSchema = {

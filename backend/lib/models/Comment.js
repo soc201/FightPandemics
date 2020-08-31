@@ -16,7 +16,8 @@ const commentSchema = new Schema(
       ref: "User",
       type: [ObjectId],
     },
-    privateMessage: {
+    privateMessages: {
+      default: [],
       type: String,
       ref: "Post",
     },
