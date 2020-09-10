@@ -74,6 +74,7 @@ services:
     volumes:
       - ./cypresse2e/cypress:/app/cypress
       - ./cypresse2e/cypress.json:/app/cypress.json
+      - ./cypresse2e/cypress.env.json:/app/cypress.env.json
     working_dir: /app
     networks:
       - fp_network
