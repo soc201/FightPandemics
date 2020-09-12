@@ -87,3 +87,17 @@ resource "aws_sns_topic_subscription" "sqs_target" {
   protocol  = "sqs"
   endpoint  = aws_sqs_queue.queue.arn
 }
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# LAMBDA EVENT SOURCE MAPPING
+# ---------------------------------------------------------------------------------------------------------------------
+
+
+resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
+  batch_size        = 1
+  event_source_arn  = aws_sqs_queue.queue.arn
+  enabled           = true
+  function_name     = aws_lambda_function.lambda.arn
+}
+
