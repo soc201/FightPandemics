@@ -21,17 +21,17 @@ defaults:
     working-directory: ./services/notification
 
 jobs:
-#  unit_tests:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: actions/setup-node@v1
-#        with:
-#          node-version: 12.18.3
-#      - name: Install NPM dependencies
-#        run: cd src && npm install
-#      - name: Run unit tests
-#        run: cd src && npm run test
+  unit_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.18.3
+      - name: Install NPM dependencies
+        run: cd src && npm install
+      - name: Run unit tests
+        run: cd src && npm run test
 
   deploy_review:
     runs-on: ubuntu-latest
