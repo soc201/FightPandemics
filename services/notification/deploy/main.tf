@@ -10,12 +10,12 @@ variable "fp_context" {
 
 variable "sns_topic_name" {
   type    = string
-  default = ""
+  default = "topic"
 }
 
 variable "sqs_queue_name" {
   type    = string
-  default = ""
+  default = "queue"
 }
 
 provider "aws" {
