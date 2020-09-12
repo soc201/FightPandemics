@@ -24,6 +24,7 @@
 //  }
 //};
 
+
 function parseSqsBodyMessage(sqsRecord) {
     const body = sqsRecord && sqsRecord.body;
     let result = {};
@@ -36,7 +37,7 @@ function parseSqsBodyMessage(sqsRecord) {
     return result;
 }
 
-exports.handler = async (event, context) =>  {
+exports.handler = async function (event, context) {
     const records = event['Records'] || [];
 
     const errorRecords = records.filter((record) => {
