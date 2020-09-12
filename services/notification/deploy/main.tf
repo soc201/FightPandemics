@@ -14,7 +14,7 @@ provider "aws" {
 
 
 resource "aws_sns_topic" "sns_topic" {
-  name = "${var.sns_topic_name}"
+  name = var.sns_topic_name
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -23,11 +23,13 @@ resource "aws_sns_topic" "sns_topic" {
 
 resource "aws_sqs_queue" "queue" {
   name = "email-notificaitons"
-  redrive_policy  = "{\"deadLetterTargetArn\":\"${aws_sqs_queue.queue_dl.arn}\",\"maxReceiveCount\":5}"
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.queue_dl.arn
+    maxReceiveCount     = 5
+  })
   visibility_timeout_seconds = 300
-
   tags = {
-    Environment = "dev"
+    Environment = var.fp_context
   }
 }
 
@@ -41,7 +43,7 @@ resource "aws_sqs_queue" "queue_dl" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_sqs_queue_policy" "notifications_queue_policy" {
-  queue_url = "${aws_sqs_queue.queue.id}"
+  queue_url = aws_sqs_queue.queue.id
 
   policy = <<POLICY
 {
@@ -70,7 +72,7 @@ POLICY
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_sns_topic_subscription" "sqs_target" {
-  topic_arn = "${aws_sns_topic.sns_topic.arn}"
+  topic_arn = aws_sns_topic.sns_topic.arn
   protocol  = "sqs"
-  endpoint  = "${aws_sqs_queue.queue.arn}"
+  endpoint  = aws_sqs_queue.queue.arn
 }
