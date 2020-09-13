@@ -18,6 +18,10 @@ variable "sqs_queue_name" {
   default = "queue"
 }
 
+data "aws_route53_zone" "route53_zone_domain" {
+  name = var.domain
+}
+
 
 variable "zone_id" {
   default = data.aws_route53_zone.route53_zone_domain.id
@@ -25,7 +29,8 @@ variable "zone_id" {
 }
 
 variable "domain" {
-  default = "fightpandemics"
+  deafault = data.aws_route53_zone.route53_zone_domain.name
+//  default = "fightpandemics"
 }
 
 provider "aws" {
@@ -127,7 +132,7 @@ resource "aws_route53_record" "fp-domain-identity-records" {
   ttl     = "600"
 
   records = [
-    "${aws_ses_domain_identity.ms.verification_token}",
+    aws_ses_domain_identity.ms.verification_token,
   ]
 }
 
