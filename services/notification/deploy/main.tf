@@ -18,16 +18,18 @@ variable "sqs_queue_name" {
   default = "queue"
 }
 
-
+//data "aws_route53_zone" "route53_zone_domain" {
+//  name = var.domain
+//}
 
 
 variable "zone_id" {
-  default = data.aws_route53_zone.route53_zone_domain.zone_id
+  name = data.aws_route53_zone.route53_zone_domain.zone_id
 
 }
 
 variable "domain" {
-  deafault = data.aws_route53_zone.route53_zone_domain.name
+  name = data.aws_route53_zone.route53_zone_domain.name
 //  default = "fightpandemics"
 }
 
