@@ -12,6 +12,8 @@ const userSchema = new Schema(
       unique: true,
       uniqueCaseInsensitive: true,
       validator: isValidEmail,
+
+
     },
     location: Object,
     photo: String,

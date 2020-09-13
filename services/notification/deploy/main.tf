@@ -18,6 +18,16 @@ variable "sqs_queue_name" {
   default = "queue"
 }
 
+
+variable "zone_id" {
+  default = data.aws_route53_zone.route53_zone_domain.id
+
+}
+
+variable "domain" {
+  default = "fightpandemics"
+}
+
 provider "aws" {
   region  = var.aws_region
   version = "~> 3.0"
@@ -101,3 +111,81 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
   function_name     = aws_lambda_function.lambda.arn
 }
 
+#--------------------------------------------------------------------------------------------------------------------
+# SES domain identity and the Route53 records associated with it
+# ---------------------------------------------------------------------------------------------------------------------
+
+
+resource "aws_ses_domain_identity" "ms" {
+  domain = var.domain
+}
+
+resource "aws_route53_record" "fp-domain-identity-records" {
+  zone_id = var.zone_id
+  name    = "_amazonses.mailslurp.com"
+  type    = "TXT"
+  ttl     = "600"
+
+  records = [
+    "${aws_ses_domain_identity.ms.verification_token}",
+  ]
+}
+
+# ses dkim
+resource "aws_ses_domain_dkim" "ms" {
+  domain = aws_ses_domain_identity.ms.domain
+}
+
+resource "aws_route53_record" "ms-dkim-records" {
+  count   = 3
+  zone_id = var.zone_id
+  name    = "${element(aws_ses_domain_dkim.ms.dkim_tokens, count.index)}._domainkey.mailslurp.com"
+  type    = "CNAME"
+  ttl     = "600"
+
+  records = [
+    "${element(aws_ses_domain_dkim.ms.dkim_tokens, count.index)}.dkim.amazonses.com",
+  ]
+}
+
+# ses mail to records
+resource "aws_route53_record" "ms-mx-records" {
+  zone_id = var.zone_id
+  name    = var.domain
+  type    = "MX"
+  ttl     = "600"
+
+  records = [
+    "10 inbound-smtp.us-west-2.amazonses.com",
+    "10 inbound-smtp.us-west-2.amazonaws.com",
+  ]
+}
+
+resource "aws_route53_record" "ms-spf-records" {
+  zone_id = var.zone_id
+  name    = var.domain
+  type    = "TXT"
+  ttl     = "600"
+
+  records = [
+    "v=spf1 include:amazonses.com -all",
+  ]
+}
+
+
+# ses rule set
+//resource "aws_ses_receipt_rule_set" "ms" {
+//  rule_set_name = "ms_receive_all"
+//}
+//
+//resource "aws_ses_active_receipt_rule_set" "ms" {
+//  rule_set_name = "${aws_ses_receipt_rule_set.ms.rule_set_name}"
+//
+//  depends_on = [
+//    "aws_ses_receipt_rule.ms",
+//  ]
+//}
+
+resource "aws_ses_receipt_rule_set" "main" {
+  rule_set_name = "primary-rules"
+}
