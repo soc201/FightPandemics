@@ -1,5 +1,3 @@
-set TF_LOG=DEBUG
-
 variable "aws_region" {
   type    = string
   default = "us-east-1"
@@ -20,9 +18,7 @@ variable "sqs_queue_name" {
   default = "queue"
 }
 
-data "aws_route53_zone" "route53_zone_domain" {
-  name = var.domain
-}
+
 
 
 variable "zone_id" {

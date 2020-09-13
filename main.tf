@@ -15,6 +15,10 @@ variable "commit_hash" {
   default = ""
 }
 
+data "aws_route53_zone" "route53_zone_domain" {
+  name = var.domain
+}
+
 data "aws_ssm_parameter" "db_host" {
   name = "/fp/database/host"
 }
