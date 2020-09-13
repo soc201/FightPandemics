@@ -24,7 +24,7 @@ data "aws_route53_zone" "route53_zone_domain" {
 
 
 variable "zone_id" {
-  default = data.aws_route53_zone.route53_zone_domain.id
+  default = data.aws_route53_zone.route53_zone_domain.zone_id
 
 }
 
