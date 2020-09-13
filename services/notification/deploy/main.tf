@@ -22,13 +22,13 @@ variable "sqs_queue_name" {
 //  name = var.domain
 //}
 
-
-variable "zone_id" {
-  name = aws_route53_zone.route53_zone_domain.zone_id
-
-}
+//
+//variable "zone_id" {
+//  name = aws_route53_zone.route53_zone_domain.zone_id
+//
+//}
 variable "domain" {
-  name = aws_route53_zone.route53_zone_domain.name
+  default = "fightpandemics"
 }
 
 provider "aws" {
@@ -124,7 +124,7 @@ resource "aws_ses_domain_identity" "ms" {
 }
 
 resource "aws_route53_record" "fp-domain-identity-records" {
-  zone_id = var.zone_id
+  zone_id = aws_route53_zone.route53_zone_domain.zone_id
   name    = "_amazonses.mailslurp.com"
   type    = "TXT"
   ttl     = "600"
@@ -141,7 +141,7 @@ resource "aws_ses_domain_dkim" "ms" {
 
 resource "aws_route53_record" "ms-dkim-records" {
   count   = 3
-  zone_id = var.zone_id
+  zone_id = aws_route53_zone.route53_zone_domain.zone_id
   name    = "${element(aws_ses_domain_dkim.ms.dkim_tokens, count.index)}._domainkey.mailslurp.com"
   type    = "CNAME"
   ttl     = "600"
@@ -153,7 +153,7 @@ resource "aws_route53_record" "ms-dkim-records" {
 
 # ses mail to records
 resource "aws_route53_record" "ms-mx-records" {
-  zone_id = var.zone_id
+  zone_id = aws_route53_zone.route53_zone_domain.zone_id
   name    = var.domain
   type    = "MX"
   ttl     = "600"
@@ -165,7 +165,7 @@ resource "aws_route53_record" "ms-mx-records" {
 }
 
 resource "aws_route53_record" "ms-spf-records" {
-  zone_id = var.zone_id
+  zone_id = aws_route53_zone.route53_zone_domain.zone_id
   name    = var.domain
   type    = "TXT"
   ttl     = "600"
