@@ -24,13 +24,11 @@ variable "sqs_queue_name" {
 
 
 variable "zone_id" {
-  name = data.aws_route53_zone.route53_zone_domain.zone_id
+  name = aws_route53_zone.route53_zone_domain.zone_id
 
 }
-
 variable "domain" {
-  name = data.aws_route53_zone.route53_zone_domain.name
-//  default = "fightpandemics"
+  name = aws_route53_zone.route53_zone_domain.name
 }
 
 provider "aws" {
