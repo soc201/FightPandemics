@@ -1,5 +1,6 @@
 import HomePage from '../../../elements/pages/homePage';
 
+
 describe('FightPandemics Home screen', () => {
 
   var h1HeadingText = "A place to offer and request help";
@@ -70,4 +71,15 @@ describe('FightPandemics Home screen', () => {
       });
 
     });
+    context('Logged in user opens Home screen ', () => {
+      beforeEach(() => {
+        home.visit();
+        });
+
+        it('Can login test in work', () => {
+          cy.login("nonExistingEmail@nan.com", "Test1234;")
+        });
+
+        
+      });
 })
