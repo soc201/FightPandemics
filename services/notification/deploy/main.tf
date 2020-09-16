@@ -132,7 +132,7 @@ data "aws_route53_zone" "selected" {
 //}
 
 output "zone_id" {
-  value       = aws_route53_zone.selected.zone_id)
+  value       = data.aws_route53_zone.selected.zone_id)
   description = "Route53 DNS Zone ID"
 }
 
