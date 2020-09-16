@@ -124,12 +124,12 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 //  private_zone = false
 //}
 
-resource "aws_route53_record" "www" {
-  zone_id = aws_route53_zone.primary.zone_id
-  name    = "www"
-  type    = "CNAME"
-  ttl     = "5"
-}
+//resource "aws_route53_record" "www" {
+//  zone_id = aws_route53_zone.primary.zone_id
+//  name    = "www"
+//  type    = "CNAME"
+//  ttl     = "5"
+//}
 
 output "zone_id" {
   value       = join("", aws_route53_zone.default.*.zone_id)
