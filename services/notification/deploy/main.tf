@@ -117,24 +117,22 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 #--------------------------------------------------------------------------------------------------------------------
 # SES domain identity and the Route53 records associated with it
 # ---------------------------------------------------------------------------------------------------------------------
-output "zone_id" {
-  value = aws_route53_zone.route53_zone_domain
+
+
+resource "aws_ses_domain_identity" "ms" {
+  domain = var.domain
 }
 
-//resource "aws_ses_domain_identity" "ms" {
-//  domain = var.domain
-//}
-//
-//resource "aws_route53_record" "fp-domain-identity-records" {
-//  zone_id = aws_route53_zone.route53_zone_domain.zone_id
-//  name    = "_amazonses.mailslurp.com"
-//  type    = "TXT"
-//  ttl     = "600"
-//
-//  records = [
-//    aws_ses_domain_identity.ms.verification_token,
-//  ]
-//}
+resource "aws_route53_record" "fp-domain-identity-records" {
+  zone_id = aws_route53_zone.route53_zone_domain.zone_id
+  name    = "_amazonses.mailslurp.com"
+  type    = "TXT"
+  ttl     = "600"
+
+  records = [
+    aws_ses_domain_identity.ms.verification_token,
+  ]
+}
 
 # ses dkim
 //resource "aws_ses_domain_dkim" "ms" {
