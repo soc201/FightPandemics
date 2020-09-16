@@ -131,6 +131,10 @@ resource "aws_route53_record" "www" {
   ttl     = "5"
 }
 
+output "zone_id" {
+  value       = join("", aws_route53_zone.default.*.zone_id)
+  description = "Route53 DNS Zone ID"
+}
 
 
 
