@@ -117,8 +117,10 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 #--------------------------------------------------------------------------------------------------------------------
 # SES domain identity and the Route53 records associated with it
 # ---------------------------------------------------------------------------------------------------------------------
+output "zone_id" {
+  value = aws_route53_zone.route53_zone_domain
+}
 
-//
 //resource "aws_ses_domain_identity" "ms" {
 //  domain = var.domain
 //}
@@ -133,8 +135,8 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 //    aws_ses_domain_identity.ms.verification_token,
 //  ]
 //}
-//
-//# ses dkim
+
+# ses dkim
 //resource "aws_ses_domain_dkim" "ms" {
 //  domain = aws_ses_domain_identity.ms.domain
 //}
@@ -174,9 +176,9 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 //    "v=spf1 include:amazonses.com -all",
 //  ]
 //}
-
-
-# ses rule set
+//
+//
+//# ses rule set
 //resource "aws_ses_receipt_rule_set" "ms" {
 //  rule_set_name = "ms_receive_all"
 //}
@@ -188,7 +190,7 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 //    "aws_ses_receipt_rule.ms",
 //  ]
 //}
-
+//
 //resource "aws_ses_receipt_rule_set" "main" {
 //  rule_set_name = "primary-rules"
 //}
