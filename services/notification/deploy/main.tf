@@ -119,20 +119,20 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 
-//data "aws_route53_zone" "selected" {
-//  name         = "developement"
-//  private_zone = false
-//}
+data "aws_route53_zone" "selected" {
+  name         = "fightpandemics.online."
+  private_zone = false
+}
 
 //resource "aws_route53_record" "www" {
-//  zone_id = aws_route53_zone.primary.zone_id
-//  name    = "www"
+//  zone_id = "/hostedzone/Z04748981VKCMGYI0Y0EB"
+//  name    = "fightpandemics.online."
 //  type    = "CNAME"
 //  ttl     = "5"
 //}
 
 output "zone_id" {
-  value       = join("", aws_route53_zone.default.*.zone_id)
+  value       = join("", aws_route53_zone.selected.*.zone_id)
   description = "Route53 DNS Zone ID"
 }
 
