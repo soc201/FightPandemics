@@ -119,16 +119,16 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 
-data "aws_route53_zone" "selected" {
-  name         = "developement"
-  private_zone = false
-}
+//data "aws_route53_zone" "selected" {
+//  name         = "developement"
+//  private_zone = false
+//}
 
 resource "aws_route53_record" "www" {
-  zone_id = data.aws_route53_zone.selected.zone_id
-  name    = data.aws_route53_zone.selected.name
-  type    = "A"
-  records = ["10.0.0.1"]
+  zone_id = aws_route53_zone.primary.zone_id
+  name    = "www"
+  type    = "CNAME"
+  ttl     = "5"
 }
 
 
