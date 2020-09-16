@@ -119,20 +119,35 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 
-resource "aws_ses_domain_identity" "ms" {
-  domain = var.domain
+data "aws_route53_zone" "selected" {
+  name         = "test.com."
+  private_zone = true
 }
 
-resource "aws_route53_record" "fp-domain-identity-records" {
-  zone_id = aws_route53_zone.route53_zone_domain.zone_id
-  name    = "_amazonses.mailslurp.com"
-  type    = "TXT"
-  ttl     = "600"
-
-  records = [
-    aws_ses_domain_identity.ms.verification_token,
-  ]
+resource "aws_route53_record" "www" {
+  zone_id = "${data.aws_route53_zone.selected.zone_id}"
+  name    = "www.${data.aws_route53_zone.selected.name}"
+  type    = "A"
+  ttl     = "300"
+  records = ["10.0.0.1"]
 }
+
+
+
+//resource "aws_ses_domain_identity" "ms" {
+//  domain = var.domain
+//}
+//
+//resource "aws_route53_record" "fp-domain-identity-records" {
+//  zone_id = aws_route53_zone.route53_zone_domain.zone_id
+//  name    = "_amazonses.mailslurp.com"
+//  type    = "TXT"
+//  ttl     = "600"
+//
+//  records = [
+//    aws_ses_domain_identity.ms.verification_token,
+//  ]
+//}
 
 # ses dkim
 //resource "aws_ses_domain_dkim" "ms" {
