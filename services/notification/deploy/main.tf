@@ -121,7 +121,7 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 
 data "aws_route53_zone" "selected" {
   name         = "test.com."
-  private_zone = true
+  private_zone = false
 }
 
 resource "aws_route53_record" "www" {
