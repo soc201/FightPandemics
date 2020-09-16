@@ -121,6 +121,7 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 
 data "aws_route53_zone" "selected" {
   name         = "fightpandemics.online."
+  private_zone = true
 }
 
 //resource "aws_route53_record" "www" {
