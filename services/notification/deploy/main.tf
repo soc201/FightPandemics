@@ -120,8 +120,7 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 
 
 data "aws_route53_zone" "selected" {
-  name         = "test.com."
-
+  name         = "developement"
   private_zone = false
 }
 
@@ -129,7 +128,6 @@ resource "aws_route53_record" "www" {
   zone_id = data.aws_route53_zone.selected.zone_id
   name    = data.aws_route53_zone.selected.name
   type    = "A"
-  ttl     = "300"
   records = ["10.0.0.1"]
 }
 
