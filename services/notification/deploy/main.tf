@@ -121,7 +121,6 @@ resource "aws_lambda_event_source_mapping" "queue_lambda_event" {
 
 data "aws_route53_zone" "selected" {
   name         = "fightpandemics.online."
-  private_zone = false
 }
 
 //resource "aws_route53_record" "www" {
@@ -131,10 +130,16 @@ data "aws_route53_zone" "selected" {
 //  ttl     = "5"
 //}
 
-output "zone_id" {
-  value       = data.aws_route53_zone.selected.zone_id
+output "ns" {
+  value       = data.aws_route53_zone.selected.name_servers
   description = "Route53 DNS Zone ID"
 }
+
+
+
+
+
+
 
 
 
