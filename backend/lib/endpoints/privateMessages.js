@@ -15,6 +15,14 @@ async function routes(app) {
   const Thread = mongo.model("Thread");
   const User = mongo.model("User");
 
+  //   app.get(
+  //     "/:threadId"
+  //   )
+
+  //   app.put(
+  //       "/:threadId/readUpdate/:messageId"
+  //   )
+
   app.post(
     "/:authorId/new/:postId",
     {
