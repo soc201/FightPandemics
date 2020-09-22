@@ -3,7 +3,10 @@ const { Schema, model, ObjectId } = require("mongoose");
 const { USER_TYPES } = require("./Author");
 
 const CONVERSATION_STATUS_OPTIONS = [
-  "accepted", "archived", "blocked", "pending"
+  "accepted",
+  "archived",
+  "blocked",
+  "pending",
 ];
 
 // -- Schema
@@ -22,7 +25,7 @@ const participantSchema = new Schema(
     newMessages: {
       default: false,
       required: true,
-      type: Boolean
+      type: Boolean,
     },
     photo: String,
     type: {
@@ -31,13 +34,16 @@ const participantSchema = new Schema(
       trim: true,
       type: String,
     },
-  }
-)
+  },
+  {
+    _id: false,
+  },
+);
 
 const threadSchema = new Schema(
   {
     participants: {
-      type: [participantSchema]
+      type: [participantSchema],
     },
     status: {
       default: "accepted",
@@ -54,13 +60,13 @@ const threadSchema = new Schema(
 // -- Indexes
 /* eslint-disable */
 // Index to ensure unique threads between users
-threadSchema.index({ "participants.id": 1 }, { "unique": true });
+threadSchema.index({ "participants.id": 1 }, { unique: true });
 
 // Index to get inbox sorted by most recent
 threadSchema.index({
   "participants.id": 1,
-  "status": 1,
-  "updatedAt": -1
+  status: 1,
+  updatedAt: -1,
 });
 /* eslint-enable */
 

@@ -10,6 +10,7 @@ const feedback = require("./endpoints/feedback");
 const geo = require("./endpoints/geo");
 const organisations = require("./endpoints/organisations");
 const posts = require("./endpoints/posts");
+const privateMessages = require("./endpoints/privateMessages");
 const users = require("./endpoints/users");
 const sendgrid = require("./endpoints/sendgrid");
 const version = require("./endpoints/version");
@@ -17,10 +18,13 @@ const version = require("./endpoints/version");
 module.exports = function createApp(config) {
   const logger = {
     level: config.logger.level,
-    prettyPrint: config.env === "dev" ? {
-      colorize: true,
-      translateTime: "SYS:standard", 
-    } : false,
+    prettyPrint:
+      config.env === "dev"
+        ? {
+            colorize: true,
+            translateTime: "SYS:standard",
+          }
+        : false,
   };
   if (config.logger.host) {
     logger.stream = logStream(config.logger);
@@ -55,6 +59,7 @@ module.exports = function createApp(config) {
   app.register(geo, { prefix: "/api/geo" });
   app.register(organisations, { prefix: "api/organisations" });
   app.register(posts, { prefix: "/api/posts" });
+  app.register(privateMessages, { prefix: "/api/messages" });
   app.register(users, { prefix: "/api/users" });
   app.register(sendgrid, { prefix: "/api/sendgrid" });
   app.get("/api/version", version);
