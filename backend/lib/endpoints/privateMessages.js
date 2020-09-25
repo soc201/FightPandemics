@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const {
   createPrivateMessageSchema,
-  createThread,
+  getMessagesByThreadIdSchema,
 } = require("./schema/privateMessages");
 
 /*
@@ -15,9 +15,59 @@ async function routes(app) {
   const Thread = mongo.model("Thread");
   const User = mongo.model("User");
 
-  //   app.get(
-  //     "/:threadId"
-  //   )
+  app.get(
+    "/thread/:threadId",
+    {
+      prevalidation: [app.authenticate],
+      schema: getMessagesByThreadIdSchema,
+    },
+    async (req, reply) => {
+      const { threadId } = req.params;
+
+      const [threadErr, thread] = await app.to(
+        Thread.findById(mongoose.Types.ObjectId(threadId)),
+      );
+
+      // validate the users
+      if (thread) {
+        for (participant in thread.participants) {
+          const [userErr, user] = await app.to(
+            User.findById(
+              mongoose.Types.ObjectId(thread.participants[participant].id),
+            ),
+          );
+          if (userErr) {
+            req.log.error(userErr, "Failed retrieving user");
+            throw app.httpErrors.internalServerError();
+          } else if (user === null) {
+            req.log.error(userErr, "User does not exist");
+            throw app.httpErrors.forbidden();
+          }
+        }
+      }
+
+      const [messagesErr, messages] = await app.to(
+        Message.find({
+          $query: {
+            threadId: mongoose.Types.ObjectId(threadId),
+          },
+          $orderby: { createdAt: -1 },
+        }),
+      );
+
+      if (messagesErr) {
+        req.log.error(messagesErr, "Failed retrieving messages");
+        throw app.httpErrors.internalServerError();
+      } else if (messages === null) {
+        throw app.httpErrors.notFound();
+      }
+
+      if (messages.length > 0) {
+        reply.code(201);
+        return messages;
+      }
+    },
+  );
 
   //   app.put(
   //       "/:threadId/readUpdate/:messageId"

@@ -16,15 +16,11 @@ const createPrivateMessageSchema = {
 
 // const getPrivateMessageByIdSchema = {};
 
-// const getThreadsByParticipant = {};
-
-const createThread = {
-  body: strictSchema()
-    .prop("participants", S.array().items(S.string()).required())
-    .prop("status", S.string().enum(CONVERSATION_STATUS_OPTIONS)),
+const getMessagesByThreadIdSchema = {
+  querystring: strictSchema().prop("threadId", S.string()),
 };
 
 module.exports = {
   createPrivateMessageSchema,
-  createThread,
+  getMessagesByThreadIdSchema,
 };
