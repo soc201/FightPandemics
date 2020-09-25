@@ -16,7 +16,7 @@ async function routes(app) {
   const User = mongo.model("User");
 
   app.get(
-    "/thread/:threadId",
+    "/:threadId",
     {
       prevalidation: [app.authenticate],
       schema: getMessagesByThreadIdSchema,
